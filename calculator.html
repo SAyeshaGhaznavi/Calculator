@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style> 
+body, html
+{
+    height:100%;
+    font-family: Arial, sans-serif;
+}
+.bg-img {
+  
+  background-image: url("greenmath.jpg");
+
+  min-height: 380px;
+
+  
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+#display
+{
+    background-color: #efefef;
+    width: 93%;
+    height: 40px;
+    border-radius: 10px;
+    margin: 10px;
+}
+.div {
+  width: 100%;
+  height: 100px;
+  background-color: #07225d;
+  text-align: center;
+  line-height: 100px;
+  font-size: 30px;
+}
+h1 {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #ffffff;
+}
+.flex-container {
+    display: flex;
+  gap: 90px;
+  gap: 10px 20px;
+  row-gap: 80px;
+  column-gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap; 
+  width: 20%;
+  align-items: center;
+  margin: auto;
+  padding: 10px;
+  flex-direction: row;
+  background-color: rgb(74, 74, 74);
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(87, 86, 86, 0.5);
+}
+
+.flex-container > div {
+  gap: 90px;
+  gap: 90px 90px;
+  row-gap: 80px;
+  column-gap: 20px;
+  background-color: #ece6e6;
+  width: 100px;
+  margin: 10px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 30px;
+  border-radius: 15px;
+}
+button {
+  width: 60px;
+  height: 60px;
+  background-color: #2d2d2d;
+  border: white;
+  border-width:50px;
+  margin: 6px;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.432); 
+  border-radius: 15px;
+  text-align: center;
+  font-family: Serif, garamond;
+  cursor:pointer;
+
+}
+.button2
+{
+  width: 100px;
+  height: 60px;
+  background-color: #c61010;
+  cursor: pointer;
+}
+button:hover
+{
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.432);
+}
+.button3
+{
+  width: 60px;
+  height: 60px;
+  background-color: #1973e0;
+  font-size: 20px;
+}
+.button4
+{
+  width: 60px; 
+  height: 60px;
+  background-color: #11a909;
+}
+
+</style>
+<script>
+    let first=true;
+    let lastnum = true;
+    function appendToDisplay(value) {
+        if(lastnum)
+        {
+            if(isNaN(value))
+            {
+                if(first)
+                {
+                    document.getElementById('display').value += value;
+                    first=false;
+                }
+                else
+                {
+                    document.getElementById('display').value += ' ' + value;
+                }
+                lastnum=false;
+            }
+            else
+            {
+                document.getElementById('display').value += value;
+                lastnum=true;
+                first=false;
+            }
+        }
+        else
+        {
+            if(isNaN(value))
+            {
+                document.getElementById('display').value +=  value;
+                lastnum=false;
+                first=false;
+            }
+            else
+            {
+                if(first)
+                {
+                    document.getElementById('display').value = value;
+                    first=false;
+                }
+                else
+                {
+                    document.getElementById('display').value += ' ' + value;
+                }
+                lastnum=true;
+                first=false;
+            }
+
+        }
+    
+    }
+
+    function evalFunction(func, value) {
+        switch (func) {
+            case 'sin':
+                return Math.sin(value);
+            case 'cos':
+                return Math.cos(value);
+            case 'tan':
+                return Math.tan(value);
+            case 'sqrt':
+                return Math.sqrt(value);
+            case undefined:
+                return 'Error: Undefined operation';
+        }
+    }
+
+    function evalBasicFunction(func, value1, value2) {
+        switch (func) {
+            case '+':
+                return value1 + value2;
+            case '-':
+                return value1 - value2;
+            case '*':
+                return value1 * value2;
+            case '/':
+                if (value2 === 0) {
+                    return 'Error: Division by zero';
+                }
+                return value1 / value2;
+            case '^':
+                return Math.pow(value1, value2);
+            case undefined:
+                return 'Error: Undefined operation';
+        }
+    }
+
+    function precedence(op) {
+        switch (op) {
+            case '+':
+            case '-':
+            case 'sin':
+            case 'cos':
+            case 'tan':
+            case 'sqrt':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            case '^':
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
+    function calculator() {
+        const display = document.getElementById('display');
+        let expression = display.value;
+
+        const array=expression.split(' ');
+
+        var i=0;
+
+        while(array.length!==1)
+        {
+            let prevPrecedence = 0;
+
+            for (j = 0; j < array.length; j++) {
+                if(isNaN(array[j]))
+                {
+                    let currentPrecedence = precedence(array[j]);
+                    if (currentPrecedence > prevPrecedence) {
+                        prevPrecedence = currentPrecedence;
+                        i=j;
+                    }
+                }
+            }
+
+            // display.value = 'Calculating...' + i;
+            // return;
+            
+            if(array[i] === 'sin' || array[i] === 'cos' || array[i] === 'tan' || array[i] === 'sqrt')
+            {
+
+                const next= Number(array[i+1]);
+                if(isNaN(next))
+                {
+                    display.value = 'Error after ' + array[i];
+                    return;
+                }
+                const newval=evalFunction(array[i], next);
+                array.splice(i, 2, newval);
+                if(i>0)
+                {
+                    i--; 
+                }
+            }
+            else if( array[i]==='+'||array[i]==='-'||array[i]==='*'||array[i]==='/' || array[i]==='^')
+            {
+                const prev=Number(array[i-1]);
+                const next=Number(array[i+1]);
+                if(isNaN(prev) || isNaN(next))
+                {
+                    display.value = 'Error after ' + array[i];
+                    return;
+                }
+                const newval=evalBasicFunction(array[i], prev, next);
+                if(array.length===3)
+                {
+                    display.value = newval;
+                    return;
+                }
+                array.splice(i-1, 3, newval);
+                if(i>=1)
+                {
+                    i-=1;
+                }
+            }
+            else if(isNaN(array[i]))
+            {
+                display.value = 'Error at ' + array[i];
+                return;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        
+        display.value=array[0];
+
+    }
+
+
+    function clearDisplay() 
+    {
+        document.getElementById('display').value = '';
+        first = true;
+        lastnum = true;
+    }
+</script>
+</head>
+<body class="bg-img">
+
+    <h1>Calculator</h1>
+    <div class="flex-container">
+<form id="calculator">
+    <input type="text" id="display" disabled>
+    <br>
+    <button class=".button" type="button" onclick="appendToDisplay('1')">1</button>
+    <button type="button" onclick="appendToDisplay('2')">2</button>
+    <button type="button" onclick="appendToDisplay('3')">3</button>
+    <button type="button" class="button3" onclick="appendToDisplay('sin')">sin</button>
+    <br>
+    <button type="button" onclick="appendToDisplay('4')">4</button>
+    <button type="button" onclick="appendToDisplay('5')">5</button>
+    <button type="button" onclick="appendToDisplay('6')">6</button>
+    <button type="button" class="button3" onclick="appendToDisplay('cos')">cos</button>
+    <br>
+    <button type="button" onclick="appendToDisplay('7')">7</button>
+    <button type="button" onclick="appendToDisplay('8')">8</button>
+    <button type="button" onclick="appendToDisplay('9')">9</button>
+    <button type="button" class="button3" onclick="appendToDisplay('tan')">tan</button>
+    <br>
+    <button type="button" class="button3" onclick="appendToDisplay('+')">+</button>
+    <button type="button" onclick="appendToDisplay('0')">0</button>
+    <button type="button" class="button3" onclick="appendToDisplay('-')">-</button>
+    <button type="button" class="button3" onclick="appendToDisplay('sqrt')">sqrt</button>
+    <br>
+    <button type="button" class="button3" onclick="appendToDisplay('*')">*</button>
+    <button type="button" class="button3" onclick="appendToDisplay('/')">/</button>
+    <button type="button" class="button3" onclick="appendToDisplay('^')">^</button>
+    
+    <br>
+    <button type="button" class="button2" onclick="clearDisplay()">Clear</button>
+    <button type="button" class="button4" onclick="calculator('=')">=</button>
+</form>
+</div>
+</body>
+
+</html>
