@@ -173,9 +173,7 @@ button:hover
                 lastnum=true;
                 first=false;
             }
-
         }
-    
     }
 
     function backspace()
@@ -185,11 +183,19 @@ button:hover
         const len=expression.length;
         if(len>1)
         {
-            expression= expression.slice(0, -2);
+            if(!isNaN(expression[len-1]) && !isNaN(expression[len-2]))
+            {
+                expression = expression.slice(0, -1);
+            }
+            else
+            {
+                expression= expression.slice(0, -2);
+            }
         }
         else if(len<=1)
         {
             clearDisplay();
+            return;
         }
         display.value=expression;
     }
@@ -223,8 +229,14 @@ button:hover
             case '*':
                 return value1 * value2;
             case '/':
-                if (value2 === 0) {
-                    return 'Error: Division by zero';
+                try 
+                {
+                    if (value2 === 0) {
+                        throw new Error ('Error: Division by zero');
+                    }
+                } 
+                catch (error) {
+                    document.getElementById('display').value = error;
                 }
                 return value1 / value2;
             case '^':
@@ -316,9 +328,15 @@ button:hover
             {
 
                 const next= Number(array[i+1]);
-                if(isNaN(next))
+                try 
                 {
-                    display.value = 'Error after ' + array[i];
+                    if(isNaN(next))
+                    {
+                        throw new Error (' after ' + array[i]);
+                        return;
+                    }
+                } catch (error) {
+                    display.value=error;
                     return;
                 }
                 const newval=evalFunction(array[i], next);
@@ -332,9 +350,17 @@ button:hover
             {
                 const prev=Number(array[i-1]);
                 const next=Number(array[i+1]);
-                if(isNaN(prev) || isNaN(next))
-                {
-                    display.value = 'Error after ' + array[i];
+                try {
+                    if(isNaN(next))
+                    {
+                        throw new Error (' after ' + array[i]);
+                    }
+                    if(isNaN(prev))
+                    {
+                        throw new Error (' before ' + array[i]);
+                    }
+                } catch (error) {
+                    display.value=error;
                     return;
                 }
                 const newval=evalBasicFunction(array[i], prev, next);
